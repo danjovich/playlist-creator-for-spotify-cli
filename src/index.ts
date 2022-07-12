@@ -19,7 +19,7 @@ LogServices.initialText(rl, term)
     await LogServices.mainText(rl, term, accessToken);
     process.exit(0);
   })
-  .catch(() => {
-    console.log('Something went wrong...');
+  .catch((error) => {
+    console.log(error);
     process.exit(1);
   });
