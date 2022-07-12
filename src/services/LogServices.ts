@@ -1,7 +1,7 @@
 import kleur from 'kleur';
 import readline from 'readline';
 import fs from 'fs';
-import openurl from 'openurl';
+import openurl from 'openurl2';
 import util from 'util';
 import { Terminal } from 'terminal-kit';
 import loginUrl from '@config/loginUrl';
