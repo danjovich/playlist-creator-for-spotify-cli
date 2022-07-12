@@ -1,7 +1,7 @@
 import kleur from 'kleur';
 import readline from 'readline';
 import fs from 'fs';
-import openurl from 'openurl2';
+import open from 'open';
 import util from 'util';
 import { Terminal } from 'terminal-kit';
 import loginUrl from '@config/loginUrl';
@@ -87,7 +87,7 @@ export default class LogServices {
         clientId: clientId as string
       });
 
-      openurl.open(redirectUrl);
+      open(redirectUrl);
 
       await term.slowTyping(
         'A page prompting you to login to Spotify was opened in your default browser.\n',
