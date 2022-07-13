@@ -239,12 +239,28 @@ export default class LogServices {
         }).promise;
       }
 
-      await this.createPlaylist(genre as string, updatedTracks, accessToken, {
-        collaborative: collaborative ?? false,
-        description,
-        isPublic: isPublic ?? false,
-        name
+      console.log('\n');
+
+      progressBar = term.progressBar({
+        width: 80,
+        title: 'Creating the playlist:',
+        titleStyle: term.green,
+        eta: true,
+        percent: true
       });
+
+      await this.createPlaylist(
+        genre as string,
+        updatedTracks,
+        accessToken,
+        {
+          collaborative: collaborative ?? false,
+          description,
+          isPublic: isPublic ?? false,
+          name
+        },
+        setProgress
+      );
 
       await term.slowTyping('\nThe playlist was created! Check your Spotify.', {
         delay: 40
@@ -274,18 +290,24 @@ export default class LogServices {
     genre: string,
     savedTracks: Track[],
     accessToken: string,
-    playlistOptions: PlaylistOptions
+    playlistOptions: PlaylistOptions,
+    setProgress: (value: number) => void
   ): Promise<void> {
     const { collaborative, description, isPublic, name } = playlistOptions;
 
     const filteredTracks = TrackServices.filterByGenre(savedTracks, genre);
 
-    await TrackServices.createPlaylist(accessToken, filteredTracks, {
-      name,
-      description,
-      collaborative,
-      isPublic
-    });
+    await TrackServices.createPlaylist(
+      accessToken,
+      filteredTracks,
+      {
+        name,
+        description,
+        collaborative,
+        isPublic
+      },
+      setProgress
+    );
   }
 
   private static generateLogo(): string[] {

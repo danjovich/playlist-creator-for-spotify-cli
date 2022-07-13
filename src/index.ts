@@ -2,6 +2,7 @@
 import terminalKit from 'terminal-kit';
 import dotenv from 'dotenv';
 import readline from 'readline';
+import { AxiosError } from 'axios';
 import LogServices from './services/LogServices';
 import './server';
 
@@ -20,6 +21,10 @@ LogServices.initialText(rl, term)
     process.exit(0);
   })
   .catch((error) => {
-    console.log(error);
+    if (error instanceof AxiosError) {
+      console.log(error.response?.data);
+    } else {
+      console.log(error);
+    }
     process.exit(1);
   });

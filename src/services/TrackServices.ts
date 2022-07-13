@@ -1,3 +1,5 @@
+import axios from 'axios';
+import waitFor from 'functions/waitFor';
 import SpotifyWebApi from 'spotify-web-api-node';
 import { Artist, PlaylistOptions, Track } from '../interfaces';
 import ArtistServices from './ArtistServices';
@@ -72,7 +74,8 @@ export default class TrackServices {
   public static async createPlaylist(
     accessToken: string,
     tracks: Track[],
-    options: PlaylistOptions
+    options: PlaylistOptions,
+    setProgress: (progress: number) => void
   ): Promise<void> {
     this.spotifyWebApi.setAccessToken(accessToken);
 
@@ -91,10 +94,27 @@ export default class TrackServices {
       (track) => `spotify:track:${track.id}`
     );
 
-    for (let i = 0; i < formattedTracksArray.length; i += 100) {
-      const slicedArray = formattedTracksArray.slice(i, i + 100);
-      await this.spotifyWebApi.addTracksToPlaylist(id, slicedArray);
+    for (let i = 0; i < formattedTracksArray.length; i += 50) {
+      const slicedArray = formattedTracksArray.slice(i, i + 50);
+
+      await waitFor(1000);
+
+      await axios.post(
+        `https://api.spotify.com/v1/playlists/${id}/tracks`,
+        {
+          uris: slicedArray
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        }
+      );
+
+      setProgress(i / formattedTracksArray.length);
     }
+
+    setProgress(1);
   }
 
   private static sortByDate(tracks: Track[]): Track[] {
