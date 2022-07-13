@@ -1,6 +1,6 @@
 import axios from 'axios';
-import waitFor from 'functions/waitFor';
 import SpotifyWebApi from 'spotify-web-api-node';
+import waitFor from '../functions/waitFor';
 import { Artist, PlaylistOptions, Track } from '../interfaces';
 import ArtistServices from './ArtistServices';
 
