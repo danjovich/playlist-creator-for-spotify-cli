@@ -94,27 +94,38 @@ export default class TrackServices {
       (track) => `spotify:track:${track.id}`
     );
 
+    let error = false;
+
     for (let i = 0; i < formattedTracksArray.length; i += 50) {
       const slicedArray = formattedTracksArray.slice(i, i + 50);
 
       await waitFor(1000);
 
-      await axios.post(
-        `https://api.spotify.com/v1/playlists/${id}/tracks`,
-        {
-          uris: slicedArray
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
+      try {
+        await axios.post(
+          `https://api.spotify.com/v1/playlists/${id}/tracks`,
+          {
+            uris: slicedArray
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
           }
-        }
-      );
+        );
+      } catch (err) {
+        error = true;
+        break;
+      }
 
       setProgress(i / formattedTracksArray.length);
     }
 
     setProgress(1);
+
+    if (error) {
+      console.log('An error ocurred while creating the playlist...');
+    }
   }
 
   private static sortByDate(tracks: Track[]): Track[] {
